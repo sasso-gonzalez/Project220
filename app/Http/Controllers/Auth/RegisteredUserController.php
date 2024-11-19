@@ -56,8 +56,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-         //(need to changed redirect????? based off of status[cant login at all if they're denied/pending] / redirect to different pages for each role)
+        // RouteServiceProvider::setHomeRoute();
+        // return redirect(RouteServiceProvider::$HOME);
+        return redirect(RouteServiceProvider::HOME);//(need to changed redirect????? based off of status[cant login at all if they're denied/pending] / redirect to different pages for each role)
     }
 }

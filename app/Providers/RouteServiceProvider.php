@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
+
 class RouteServiceProvider extends ServiceProvider
 {
     /**
@@ -17,7 +18,36 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/welcome'; //(have to change based off of who is logging in as well as if their account is approved????) -serena
+     //(have to change based off of who is logging in as well as if their account is approved????) -serena
+
+    public const HOME = '/';
+//      public static $HOME = '/';
+
+//      public static function setHomeRoute(): void
+// {
+//     $user = auth()->user();
+//     switch ($user->role) 
+//     {
+//         case 'admin':
+//             self::$HOME = '/adminHome';
+//             break;
+//         case 'Doctor':
+//             self::$HOME = '/doctorHome';
+//             break;
+//         case 'Patient':
+//             self::$HOME = '/patientHome';
+//             break;
+//         case 'Caregiver':
+//             self::$HOME = '/caregiverHome';
+//             break;
+//         case 'Supervisor':
+//             self::$HOME = '/supervisorHome';
+//             break;
+//         default:
+//             self::$HOME = '/defaultHome'; // Fallback route
+//             break;
+//     }
+// }
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

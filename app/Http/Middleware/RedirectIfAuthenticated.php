@@ -21,6 +21,8 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                // RouteServiceProvider::setHomeRoute();
+                // return redirect(RouteServiceProvider::$HOME);
                 return redirect(RouteServiceProvider::HOME); //redirect to login and clear session???
             }
         }

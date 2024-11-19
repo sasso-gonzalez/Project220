@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Caregiver;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;////////////////
 
-class CaregiverController extends Controller
+class CaregiverHomeController extends Controller
 {
     public function __construct()
     {

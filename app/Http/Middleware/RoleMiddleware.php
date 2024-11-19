@@ -32,26 +32,4 @@ class RoleMiddleware
     }
 }
 
-
-// class RoleMiddleware
-// {
-//     /**
-//      * Handle an incoming request.
-//      *
-//      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-//      * 
-//      */
-//     public function handle(Request $request, Closure $next, $role)
-//     {
-//         if (!auth()->check()) {
-//             return redirect('/'); // Redirect to the home page if the user doesn't have the correct role
-//         }
-
-//         if(auth()-> user()->role == $role){ //Isaiah changed
-//             return redirect('/admin');
-//         }
-
-//     } 
-// } 
-
 ?>

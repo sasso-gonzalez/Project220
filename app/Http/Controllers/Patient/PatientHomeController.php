@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Patient;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;////////////////
 
-class PatientController extends Controller
+class PatientHomeController extends Controller
 {
     public function __construct()
     {
@@ -16,3 +16,5 @@ class PatientController extends Controller
         return view('patientHome'); // A Blade view for patient Home
     }
 }
+
+?>
