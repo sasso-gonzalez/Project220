@@ -25,8 +25,6 @@ class User extends Authenticatable
         'role',
         'phone',
         'date_of_birth',
-        // 'email',
-        // 'password', //duplicated? 
         'family_code',
         'emergency_contact',
         'relation_emergency_contact',
@@ -51,4 +49,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+
+    use Notifiable;
+
+    /**
+     * Check if the user has a specific role or roles.
+     *
+     * @param  array|string  $roles
+     * @return bool
+     */
+    public function hasRole($roles): bool
+    {
+        if (is_array($roles)) {
+            return in_array($this->role, $roles); // Check if the user's role is in the array
+        }
+
+        return $this->role === $roles; // Check if the user's role matches the string
+    }
 }
+

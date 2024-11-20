@@ -12,10 +12,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->id('user_id');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('role')->default('user');
+            $table->string('role'); // foreign key column
+            $table->foreign('role')->references('role')->on('roles'); // foreign key constraint            
             $table->string('phone')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('email')->unique();
@@ -34,8 +35,15 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['first_name', 'last_name', 'role', 'phone', 'date_of_birth','family_code','emergency_contact','relation_emergency_contact', 'status']);
+            $table->dropForeign(['role']); // drop foreign key constraint -serena
+        });
+    
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['user_id', 'first_name', 'last_name', 'role', 'phone', 'date_of_birth','family_code','emergency_contact','relation_emergency_contact', 'status']); //added user_id -serena (11/20)
         });
     }
     
 };
+
+
+//$table->string('role')->default('user');

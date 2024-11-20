@@ -13,7 +13,7 @@
 //      */
 //     public function handle(Request $request, Closure $next)
 //     {
-//         if (Auth::check() && Auth::user()->role === 'Doctor') {
+//         if (Auth::check() && Auth::user()->role === 'doctor') {
 //             return $next($request);
 //         }
 
@@ -21,4 +21,3 @@
 //     }
 // }
 
-?>

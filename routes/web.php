@@ -7,12 +7,17 @@ use App\Http\Controllers\Supervisor\SupervisorHomeController;
 use App\Http\Controllers\Doctor\DoctorHomeController;
 use App\Http\Controllers\Caregiver\CaregiverHomeController;
 use App\Http\Controllers\Patient\PatientHomeController;
-
+use App\Http\Controllers\AdminRolesController;
+use App\Http\Controllers\ShiftController;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/unauthorized', function () {
+    return view('unauthorized');
+})->name('unauthorized');
 
 Route::get('/dashboard', function () { //do we honestly need either of these?? -serena
     return view('dashboard');
@@ -26,11 +31,23 @@ Route::middleware('auth')->group(function () {
 
 // Admin Account Routes
 Route::middleware(['auth', 'admin'])->group(function () {
+    //home page
+    Route::get('/admin/home', [AdminAccountController::class, 'adminHome'])->name('adminHome');
+    //pending acounts page
     Route::get('/admin/pending_accounts', [AdminAccountController::class, 'index'])->name('admin.pending');
     Route::post('/admin/approve/{id}', [AdminAccountController::class, 'approve'])->name('admin.approve');
     Route::post('/admin/deny/{id}', [AdminAccountController::class, 'deny'])->name('admin.deny');
-    Route::get('/admin/home', [AdminAccountController::class, 'adminHome'])->name('adminHome');
+
+    Route::get('/admin/roles', [AdminRolesController::class, 'index'])->name('adminRoles');
+    Route::post('/admin/store', [AdminRolesController::class, 'store'])->name('admin.store');
+
+    Route::get('/admin/list', [AdminAccountController::class, 'adminList'])->name('adminList');
+    Route::post('/admin/submit-salary/{id}', [AdminAccountController::class, 'submitSalary'])->name('admin.submitSalary');
+
+    
 });
+
+
 
 // Supervisor Routes
 Route::middleware(['auth', 'supervisor'])->group(function () {
@@ -73,7 +90,7 @@ Route::middleware(['auth', 'Patient'])->group(function () {
 
 
 
-// Role-specific Routes
+//Role-specific Routes
 Route::middleware(['auth', 'role:Doctor'])->group(function () {
     Route::get('/doctor/home', [DoctorHomeController::class, 'doctorHome'])->name('doctorHome');
 });
@@ -91,104 +108,29 @@ Route::middleware(['auth', 'role:Patient'])->group(function () {
     Route::get('/patient/home', [PatientHomeController::class, 'patientHome'])->name('patientHome');
 });
 
+// Route::middleware(['auth', 'role:Admin'])->group(function () {
+//     Route::get('/admin/home', [AdminHomeController::class, 'adminHome'])->name('adminHome');
+// });
 
-
+//Roster route
+Route::middleware(['auth'])->group(function () {
+    Route::get('/shifts/index', [ShiftController::class, 'index'])->name('shifts.index');
+    Route::post('/shifts/store', [ShiftController::class, 'store'])->name('shifts.store');
+});
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
 
+// Roster stuff
+Route::middleware(['auth', 'role:admin,Supervisor'])->group(function () {
+    Route::get('/shifts/create', [ShiftController::class, 'create'])->name('shifts.create');
+    Route::post('/shifts', [ShiftController::class, 'store'])->name('shifts.store');
+    Route::get('/shifts/{id}/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
+    Route::put('/shifts/{id}', [ShiftController::class, 'update'])->name('shifts.update');
+});
+
+Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
+
+
 require __DIR__.'/auth.php';
-
-
-
-// use App\Http\Controllers\Auth\RegisteredUserController;
-// use App\Http\Controllers\ProfileController;
-// use Illuminate\Support\Facades\Route;
-
-// use App\Http\Controllers\AdminHomeController; //Supposed to be homeController??????
-// use App\Http\Controllers\DoctorController;
-// use App\Http\Controllers\PatientController;
-// use App\Http\Controllers\CaregiverController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
-
-
-// // Admin Account Routes //XD
-// Route::middleware(['auth', 'admin'])->group(function () {
-//     Route::get('/admin/pending-accounts', [AdminAccountController::class, 'index'])->name('admin.pending');
-//     Route::post('/admin/approve/{id}', [AdminAccountController::class, 'approve'])->name('admin.approve');
-//     Route::post('/admin/deny/{id}', [AdminAccountController::class, 'deny'])->name('admin.deny');
-// });
-
-// Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-// Route::post('/register', [RegisteredUserController::class, 'store']);
-
-// // Admin Route
-// Route::middleware('auth')->group(function () {
-//     Route::get('/admin/home', [AdminHomeController::class, 'adminHome'])->name('adminHome'); 
-// });
-
-// // Doctor Route
-// Route::middleware('auth')->group(function () {
-//     Route::get('/doctor/home', [DoctorController::class, 'doctorHome'])->name('doctorHome');
-// });
-
-// // Patient Route
-// Route::middleware('auth')->group(function () {
-//     Route::get('/patient/home', [PatientController::class, 'patientHome'])->name('patientHome');
-// });
-
-// // Caregiver Route
-// Route::middleware('auth')->group(function () {
-//     Route::get('/caregiver/home', [CaregiverController::class, 'caregiverHome'])->name('caregiverHome');
-// });
-
-// // Supervisor Route
-// Route::middleware('auth')->group(function () {
-//     Route::get('/supervisor/home', [SupervisorController::class, 'supervisorHome'])->name('supervisorHome');
-// });
-
-
-
-// Route::middleware(['auth', 'role:admin'])->group(function () {
-//     Route::get('/admin/home', [AdminHomeController::class, 'adminHome'])->name('adminHome');
-// });
-
-// Route::middleware(['auth', 'role:doctor'])->group(function () {
-//     Route::get('/doctor/home', [DoctorController::class, 'doctorHome'])->name('doctorHome');
-// });
-
-// Route::middleware(['auth', 'role:patient'])->group(function () {
-//     Route::get('/patient/home', [PatientController::class, 'patientHome'])->name('patientHome');
-// });
-
-// Route::middleware(['auth', 'role:caregiver'])->group(function () {
-//     Route::get('/caregiver/home', [CaregiverController::class, 'caregiverHome'])->name('caregiverHome');
-// });
-
-
-// require __DIR__.'/auth.php';

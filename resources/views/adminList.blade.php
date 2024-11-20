@@ -21,7 +21,7 @@
                 @csrf
                 <button type="submit">{{ __('Home') }}</button>
             </form>
-            <form method="GET" action="{{ route('adminRoles') }}"> 
+                <form method="GET" action="{{ route('adminRoles') }}"> 
                 @csrf
                 <button type="submit">{{ __('Roles') }}</button>
             </form>
@@ -33,36 +33,53 @@
                 @csrf
                 <button type="submit">{{ __('Patients/Employee List') }}</button>
             </form>
-
         </div>
     </div>
-    <br><br><br><br>
-    <h1>Pending Accounts</h1>
+
+<br><br><br><br><br>
+
     <table> 
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Email</th>
                 <th>Role</th>
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($pendingUsers as $user)
+            @foreach($adminPatientList as $user)
                 <tr>
                     <td>{{ $user->first_name }} {{ $user->last_name }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->role }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table> 
+    <table> 
+        <tbody>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+            <br>
+            @foreach($adminEmployeeList as $user)
+                <tr>
+                    <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                     <td>{{ $user->role }}</td>
                     <td>
-                        <form method="POST" action="{{ route('admin.approve', $user->id) }}">
-                            @csrf
-                            <button type="submit">Approve</button>
-                        </form>
-                        <form method="POST" action="{{ route('admin.deny', $user->id) }}">
-                            @csrf
-                            <button type="submit">Deny</button>
-                        </form>
-                    </td>
+                        <!-- <div>
+                            <form action=" route('admin.submitSalary', ['id' => $employee->id]) " method="POST">
+                                @csrf
+                                <div>
+                                    <label for="salary">Salary:</label>
+                                    <input type="number" id="salary" name="salary" required>
+                                </div>
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div> -->
+                    </td> 
                 </tr>
             @endforeach
         </tbody>

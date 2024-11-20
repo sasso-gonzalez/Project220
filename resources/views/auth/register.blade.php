@@ -1,5 +1,21 @@
 <link rel="stylesheet" href="{{ asset('CSS/app.css') }}">
 <x-guest-layout>
+<div class="navbar">
+            @if (Route::has('login'))
+                <div class="navbar_items">
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="word">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" class="word">Log in</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="word">Register</a>
+                        @endif
+                    @endauth
+                </div>
+            @endif
+        </div>
+<br><br><br><br><br><br>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
         
@@ -96,6 +112,10 @@
             else{
                 newFields.style.display = 'none'
             }
+        }
+
+        function access(){
+            var role = document.getElementById('role').value
         }
     </script>
 </x-guest-layout>

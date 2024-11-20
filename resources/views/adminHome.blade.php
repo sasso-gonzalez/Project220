@@ -17,10 +17,25 @@
                 @csrf
                 <button type="submit">{{ __('Account Status') }}</button>
             </form>
-
-
+            <form method="GET" action="{{ route('adminHome') }}"> 
+                @csrf
+                <button type="submit">{{ __('Home') }}</button>
+            </form>
+            <form method="GET" action="{{ route('adminRoles') }}"> 
+                @csrf
+                <button type="submit">{{ __('Roles') }}</button>
+            </form>
+            <form method="GET" action="{{ route('shifts.index') }}"> 
+                @csrf
+                <button type="submit">{{ __('Work Shifts') }}</button>
+            </form>
+            <form method="GET" action="{{ route('adminList') }}"> 
+                @csrf
+                <button type="submit">{{ __('Patients/Employee List') }}</button>
+            </form>
         </div>
     </div>
+    <br><br><br><br>
     <div class="container">
         <h1>Welcome, Admin!</h1>
         <p>This is the Admin Dashboard.</p>

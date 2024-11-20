@@ -10,6 +10,10 @@
                     {{ __('Log Out') }}
                 </x-dropdown-link>
             </form>
+            <form method="GET" action="{{ route('patientHome') }}"> 
+                @csrf
+                <button type="submit">{{ __('Home') }}</button>
+            </form>
 
         </div>
     </div>
