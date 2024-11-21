@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employees', function (Blueprint $table) {
-            $table->id('emp_id'); // primary key
-            $table->unsignedBigInteger('user_id'); // Foreign key to users table
-            $table->decimal('salary', 11, 2);
+        Schema::create('patients', function (Blueprint $table) {
+            $table->id('patient_id');
+            $table->unsignedBigInteger('user_id');
+            $table->integer('family_code')->unique();
+            $table->string('caregroup');
+            $table->decimal('amount_due', 11, 2);
+            $table->date('payment_date');
             $table->timestamps();
 
-
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+
         });
-
-
     }
 
     /**
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('patients');
     }
 };
