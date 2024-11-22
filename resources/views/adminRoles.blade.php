@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
-
 <div class="navbar">
     <div class="navbar_items">
 
@@ -38,32 +36,11 @@
 
     </div>
 </div>
-<br><br><br><br><br>
-<div class="container mt-5">
-        <h1>Role Management</h1>
-        <p>This page is accessed by Admin only.</p>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Role</th>
-                    <th>Access Level</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($roles as $role)
-                    <tr>
-                        <td>{{ $role->role }}</td>
-                        <td>{{ $role->access_level }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
     <h1>Role Management</h1>
     <p>This page is accessed by Admin only.</p>
     
-    <form method="GET" class="mt-4">
+    <form method="GET" class="">
         <table class="table">
             <thead>
                 <tr>
@@ -77,28 +54,20 @@
                     <tr>
                         <td>{{ $role->role }}</td>
                         <td>{{ $role->access_level }}</td>
-                        <td>
-                            <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                        </td>
+                        <td><a href="#">Edit</a></td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </form>
-
-<div>
+<br>
     <thead>
         <tr>
             <th>Role</th>
-            <th>Access Level</th>
+            <th>Access Level</th><br>
         </tr>
     </thead>
     <tbody>
-            <tr>
-                <td>{{ $role->role }}</td>
-                <td>{{ $role->access_level }}</td>
-            </tr>
         <form action="{{ route('admin.store') }}" method="POST">
             @csrf
             <div class="mb-3">

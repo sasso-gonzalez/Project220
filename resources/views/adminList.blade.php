@@ -54,31 +54,29 @@
             @endforeach
         </tbody>
     </table> 
+    <br><br>
     <table> 
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
         <tbody>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Role</th>
-                    <th>Salary</th>
-                </tr>
-            </thead>
-            <br>
             @foreach($adminEmployeeList as $user)
                 <tr>
                     <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                     <td>{{ $user->role }}</td>
                     <td>
-                        <!-- <div>
+                        <div>
                             <form action=" route('admin.submitSalary', ['id' => $employee->id]) " method="POST">
                                 @csrf
                                 <div>
-                                    <label for="salary">Salary:</label>
-                                    <input type="number" id="salary" name="salary" required>
+                                    <input type="number" id="salary" value="{{ $user->employee->salary }}" name="salary" required><button type="submit">Submit</button>
                                 </div>
-                                <button type="submit">Submit</button>
                             </form>
-                        </div> -->
+                        </div>
                     </td> 
                 </tr>
             @endforeach

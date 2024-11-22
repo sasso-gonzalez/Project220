@@ -18,8 +18,10 @@ return new class extends Migration
             $table->timestamps();
 
 
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        DB::statement('ALTER TABLE employees AUTO_INCREMENT = 90001'); //gives a starting number for emp_id
+    
 
 
     }

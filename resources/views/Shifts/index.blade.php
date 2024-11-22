@@ -66,7 +66,7 @@
                         <td>{{ $shift->patient_group }}</td>
                         @if(auth()->user()->hasRole(['admin', 'Supervisor']))
                             <td>
-                                <a href="{{ route('shifts.edit', $shift->role) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-sm btn-warning">Edit</a>
                             </td>
                         @endif
                     </tr>

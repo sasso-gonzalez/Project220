@@ -4,14 +4,45 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Controllers\EmployeeController;
+use App\Models\User;
 
 class Employee extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'emp_id',
-        'user_id', 
+        'user_id',
         'salary',
     ];
+
+    protected $primaryKey = 'emp_id';
+    public $incrementing = false; //what's this for??? -serena
+
+    /**
+     * Relationship with User model
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Relationship with Shift model
+     */
+    public function shifts()
+    {
+        return $this->hasMany(Shift::class, 'emp_id', 'emp_id');
+    }
+
+    /**
+     * Scope for filtering by role
+     */
+    public function scopeByRole($query, $role)
+    {
+        return $query->whereHas('user', function ($q) use ($role) {
+            $q->where('role', $role);
+        });
+    }
 }
+

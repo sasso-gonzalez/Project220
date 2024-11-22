@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shift;
-use App\Models\User;
+use App\Models\Employee; //changed from User to employee
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class ShiftController extends Controller
 {
@@ -22,8 +23,10 @@ class ShiftController extends Controller
      */
     public function create()
     {
-        $users = User::all(); // Get all users to select for the shift
-        return view('shifts.create', compact('users'));
+        // Fetch all employees and eager load their related user (to get the role and name)
+        $employees = Employee::with('user')->get(); // This will include the user's data (name, role, etc.)
+        
+        return view('shifts.create', compact('employees'));
     }
 
     /**
@@ -32,12 +35,12 @@ class ShiftController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'role' => 'required|string|unique:shifts',
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
+            // 'role' => 'required|string|unique:shifts',
+            'emp_id' => 'required|exists:employees,emp_id',
+            // 'name' => 'required|string|max:255',
             'shift_start' => 'required|date',
             'shift_end' => 'required|date|after:shift_start',
-            'patient_group' => 'nullable|string|max:255',
+            // 'patient_group' => 'nullable|string|max:255',
         ]);
 
         Shift::create($request->all());
@@ -51,9 +54,11 @@ class ShiftController extends Controller
     public function edit($id)
     {
         $shift = Shift::findOrFail($id);
-        $users = User::all(); // Get all users to select for the shift
-        return view('shifts.edit', compact('shift', 'users'));
+        $employees = Employee::all();
+        return view('shifts.edit', compact('shift', 'employees'));
     }
+    
+    
 
     /**
      * Update an existing shift in the database.
@@ -61,12 +66,12 @@ class ShiftController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'role' => 'required|string|unique:shifts,role,' . $id,
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
+            // 'role' => 'required|string|unique:shifts,role,' . $id,
+            'emp_id' => 'required|exists:employees,emp_id',
+            // 'name' => 'required|string|max:255',
             'shift_start' => 'required|date',
             'shift_end' => 'required|date|after:shift_start',
-            'patient_group' => 'nullable|string|max:255',
+            // 'patient_group' => 'nullable|string|max:255',
         ]);
 
         $shift = Shift::findOrFail($id);

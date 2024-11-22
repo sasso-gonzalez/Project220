@@ -112,10 +112,12 @@ Route::middleware(['auth', 'role:Patient'])->group(function () {
 //     Route::get('/admin/home', [AdminHomeController::class, 'adminHome'])->name('adminHome');
 // });
 
-//Roster route
+//Roster related routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/shifts/index', [ShiftController::class, 'index'])->name('shifts.index');
     Route::post('/shifts/store', [ShiftController::class, 'store'])->name('shifts.store');
+    Route::get('/shifts/{id}/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
+
 });
 
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');

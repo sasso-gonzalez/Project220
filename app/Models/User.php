@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'first_name',
         'last_name',
         'email',
@@ -68,5 +69,16 @@ class User extends Authenticatable
 
         return $this->role === $roles; // Check if the user's role matches the string
     }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id', 'id');
+    }
+
+    public function patient()
+    {
+        return $this->hasOne(Patient::class, 'patient_id', 'id');
+    }
 }
+
 

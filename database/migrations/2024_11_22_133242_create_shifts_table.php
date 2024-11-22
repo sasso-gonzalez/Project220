@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('shifts', function (Blueprint $table) {
-            $table->string('role')->primary(); // Define 'role' as the primary key
-            $table->unsignedBigInteger('user_id'); // Foreign key to users table
-            $table->string('name');
+            $table->id(); // Define 'role' as the primary key
+            $table->unsignedBigInteger('emp_id'); // Foreign key to users table
+            $table->string('caregroup')->nullable(); //group that caregiver takes per day -serena
             $table->timestamp('shift_start');
             $table->timestamp('shift_end');
-            $table->string('patient_group');
             $table->timestamps();
 
             // Define foreign key constraint
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('emp_id')->references('emp_id')->on('employees')->onDelete('cascade');
         });
     }
 

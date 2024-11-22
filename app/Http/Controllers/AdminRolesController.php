@@ -36,11 +36,5 @@ class AdminRolesController extends Controller
 
         return redirect()->route('adminRoles')->with('success', 'Role updated successfully');
     }
-    public function delete(Request $request){
-        $role = Role::findOrFail($id);
-        $role->delete();
-        
-        return redirect()->route('adminRoles')->with('success', 'Role deleted successfully');
-    }
 
 }

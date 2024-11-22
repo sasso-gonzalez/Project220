@@ -28,6 +28,20 @@ class AuthenticatedSessionController extends Controller
         // Authenticate the user
         $request->authenticate();
 
+        $user = auth()->user();
+        if ($user->status === 'N/A') {
+            // should continue on past the else if, if true...
+        }
+        else if ($user->status !== "approved") {
+            // Log out the user immediately
+            auth()->logout();
+    
+            // Redirect back with an error message
+            return back()->withErrors([
+                'email' => __('Your account is not yet approved. Please contact support.'),
+            ]);
+        }
+
         // Regenerate the session to prevent session fixation
         $request->session()->regenerate();
 
