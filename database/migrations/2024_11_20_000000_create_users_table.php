@@ -33,12 +33,11 @@ return new class extends Migration
         });
     }
     
-    
     public function down()
     {
-        // Schema::table('users', function (Blueprint $table) {
-        //     $table->dropForeign(['role']); // drops foreign key constraint -serena
-        // });
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['role']); // drops foreign key constraint -serena
+        });
     
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['first_name', 'last_name', 'role', 'phone', 'date_of_birth','family_code','emergency_contact','relation_emergency_contact', 'status']); //added user_id -serena (11/20)

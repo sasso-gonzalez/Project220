@@ -23,7 +23,7 @@ class AdminRolesController extends Controller
         return redirect()->route('adminRoles')->with('success', 'Role added successfully');
     }
     public function edit(Request $request){
-        $shift = Shift::findOrFail($id);
+        $roles = Role::findOrFail($id);
 
         $request->validate([
             'role' => 'required|string|max:255',

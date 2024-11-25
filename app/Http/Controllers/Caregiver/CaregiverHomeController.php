@@ -10,7 +10,11 @@ class CaregiverHomeController extends Controller
     {
         $this->middleware('auth');
     }
-
+    public function showCaregiverHome()
+    {
+        $patients = Patient::all(); // Fetch patients from the database
+        return view('caregiver_home', compact('patients'));
+    }
     public function caregiverHome()
     {
         return view('caregiverHome'); // A Blade view for Caregiver Home

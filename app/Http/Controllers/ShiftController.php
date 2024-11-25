@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Shift;
 use App\Models\Employee; //changed from User to employee
 use Illuminate\Http\Request;
-use App\Models\User;
+
 
 class ShiftController extends Controller
 {
     /**
      * Display a listing of shifts.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $shifts = Shift::all();
+        $query = Shift::with('employee.user');
+    
+        if ($request->has('date')) {
+            $date = $request->input('date');
+            $query->whereDate('shift_start', $date);
+        }
+    
+        $shifts = $query->orderBy('shift_start', 'asc')->get();
+    
         return view('shifts.index', compact('shifts'));
     }
 
@@ -35,16 +44,14 @@ class ShiftController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            // 'role' => 'required|string|unique:shifts',
             'emp_id' => 'required|exists:employees,emp_id',
-            // 'name' => 'required|string|max:255',
             'shift_start' => 'required|date',
             'shift_end' => 'required|date|after:shift_start',
-            // 'patient_group' => 'nullable|string|max:255',
+            'caregroup' => 'nullable|string|max:255',
         ]);
-
+    
         Shift::create($request->all());
-
+    
         return redirect()->route('shifts.index')->with('success', 'Shift created successfully!');
     }
 
@@ -66,21 +73,18 @@ class ShiftController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            // 'role' => 'required|string|unique:shifts,role,' . $id,
             'emp_id' => 'required|exists:employees,emp_id',
-            // 'name' => 'required|string|max:255',
             'shift_start' => 'required|date',
             'shift_end' => 'required|date|after:shift_start',
-            // 'patient_group' => 'nullable|string|max:255',
+            'caregroup' => 'nullable|string|max:255',
         ]);
-
+    
         $shift = Shift::findOrFail($id);
         $shift->update($request->all());
-
+    
         return redirect()->route('shifts.index')->with('success', 'Shift updated successfully!');
     }
 }
-
 
 // namespace App\Http\Controllers;
 

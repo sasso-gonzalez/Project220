@@ -46,8 +46,8 @@ class CheckAccessLevel
 
         // Define access levels for routes
         $accessRules = [
-            'admin.*' => 5,  // Example: Only access level 5 can access 'admin.*' routes
-            'user.*'  => 1,  // Example: Access level 1 and above can access 'user.*' routes
+            'admin.*' => 1,  // Example: Only access level 1 can access 'admin.*' routes
+            'user.*'  => 5,  // Example: Access level 5 and above can access 'user.*' routes
         ];
 
         foreach ($accessRules as $pattern => $requiredLevel) {

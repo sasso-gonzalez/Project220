@@ -46,7 +46,7 @@
                 <tr>
                     <th>Role</th>
                     <th>Access Level</th>
-                    <th>Actions</th>
+                    <!-- <th>Actions</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -54,7 +54,7 @@
                     <tr>
                         <td>{{ $role->role }}</td>
                         <td>{{ $role->access_level }}</td>
-                        <td><a href="#">Edit</a></td>
+                        <!-- <td><a href="#">Edit</a></td> Mr hassan said no edit/delete i think? -serena-->
                     </tr>
                 @endforeach
             </tbody>
@@ -71,8 +71,8 @@
         <form action="{{ route('admin.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <x-input-label for="role_name" class="form-label">New Role</x-input-label>
-                <input type="text" id="role_name" name="role_name" class="form-control" required>
+                <x-input-label for="role" class="form-label">New Role</x-input-label>
+                <input type="text" id="role" name="role" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label for="access_level" class="form-label">Access Level</label>

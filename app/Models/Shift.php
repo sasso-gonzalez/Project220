@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\ShiftController; //not sure if this is necessary.
 
+use App\Models\Employee;
+
+
 class Shift extends Model
 {
     use HasFactory;
@@ -22,6 +25,11 @@ class Shift extends Model
         'shift_start',
         'shift_end',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'emp_id', 'emp_id');
+    }
 
     // Define relationship with the User model
     // public function user()

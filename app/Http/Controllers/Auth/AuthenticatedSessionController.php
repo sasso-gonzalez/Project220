@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+use App\Models\Role;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -47,20 +49,38 @@ class AuthenticatedSessionController extends Controller
 
         // After successful authentication, check the user's role and redirect
         $user = auth()->user();
-        switch ($user->role) 
-        {
-            case 'admin':
+        $role = Role::findOrFail($user->role);
+        $level = $role->access_level;
+        switch ($level) {
+            case 1:
                 return redirect()->route('adminHome');
-            case 'Doctor':
-                return redirect()->route('doctorHome');
-            case 'Patient':
-                return redirect()->route('patientHome');
-            case 'Caregiver':
-                return redirect()->route('caregiverHome');
-            case 'Supervisor':
+            case 2:
                 return redirect()->route('supervisorHome');
+            case 3:
+                return redirect()->route('doctorHome');
+            case 4:
+                return redirect()->route('caregiverHome');
+            case 5:
+                return redirect()->route('patientHome');
+            case 6:
+                return redirect()->route('familyHome');
         }
     }
+    //     $user = auth()->user();
+    //     switch ($user->role) 
+    //     {
+    //         case 'admin':
+    //             return redirect()->route('adminHome');
+    //         case 'Doctor':
+    //             return redirect()->route('doctorHome');
+    //         case 'Patient':
+    //             return redirect()->route('patientHome');
+    //         case 'Caregiver':
+    //             return redirect()->route('caregiverHome');
+    //         case 'Supervisor':
+    //             return redirect()->route('supervisorHome');
+    //     }
+    // }
 
     /**
      * Destroy an authenticated session.

@@ -12,18 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('role')->unique(); // role_name changed to role
+            $table->string('role')->primary(); // Set role as primary key
             $table->integer('access_level');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['role']);
+        });
+
         Schema::dropIfExists('roles');
     }
 

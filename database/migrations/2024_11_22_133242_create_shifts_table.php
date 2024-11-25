@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id(); // Define 'role' as the primary key
             $table->unsignedBigInteger('emp_id'); // Foreign key to users table
             $table->string('caregroup')->nullable(); //group that caregiver takes per day -serena
+            // $table->timestamp('shift_date');
             $table->timestamp('shift_start');
             $table->timestamp('shift_end');
             $table->timestamps();

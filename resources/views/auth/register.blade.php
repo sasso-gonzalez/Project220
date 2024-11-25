@@ -34,16 +34,18 @@
         </div>
 
         <!-- Role -->
-        <div>
-            <x-input-label for="role" :value="__('Role')" />
-            <select id="role" name="role" class="" onchange="patientFields();">
-                <option value="Doctor">Doctor</option>
-                <option value="Patient">Patient</option>
-                <option value="Caregiver">Caregiver</option>
-                <option value="Supervisor">Supervisor</option>
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select name="role" id="role" class="form-control" required>
+                <option value="" disabled selected>Select a role</option>
+                @foreach($roles as $role)
+                    @if ( $role->role !== 'admin') <!-- making sure you can't just register another admin -serena -->
+                    <option value="{{ $role->role }}">{{ $role->role }}</option> 
+                    @endif
+                @endforeach
             </select>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
+
 
         <!-- Email Address -->
         <div class="mt-4">
