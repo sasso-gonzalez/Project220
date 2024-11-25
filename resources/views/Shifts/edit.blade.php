@@ -36,45 +36,30 @@
 <br><br><br><br>
 <div class="container">
     <h1>Edit Shift</h1>
-    <form method="POST" action="{{ route('shifts.update', $shift->id) }}">
+    <form action="{{ route('shifts.update', $shift->id) }}" method="POST">
         @csrf
         @method('PUT')
-        <div>
-            <label for="emp_id">Assign Employee</label>
-            <select name="emp_id" id="emp_id" onchange="updateRole()" required>
-                <option value="" disabled>Select an Employee</option>
-                @foreach($employees as $employee)
-                    <option value="{{ $employee->emp_id }}" 
-                        data-role="{{ $employee->user->role ?? '' }}"
-                        {{ $shift->emp_id == $employee->emp_id ? 'selected' : '' }}>
-                        {{ $employee->user->first_name ?? 'N/A' }} {{ $employee->user->last_name ?? 'N/A' }}
-                    </option>
+        <input type="date" name="shift_date" value="{{ $shift->shift_date }}" required>
+        <input type="datetime-local" name="shift_start" value="{{ $shift->shift_start }}" required>
+        <input type="datetime-local" name="shift_end" value="{{ $shift->shift_end }}" required>
+        <div id="caregroup-div">
+            <label for="caregroup">Care Group:</label>
+            <select name="caregroup" id="caregroup" required>
+                @foreach ($availableCaregroups as $caregroup)
+                    <option value="{{ $caregroup }}" {{ $shift->caregroup == $caregroup ? 'selected' : '' }}>{{ $caregroup }}</option>
                 @endforeach
             </select>
         </div>
-        <div>
-            <label for="role">Role</label>
-            <input type="text" name="role" id="role" value="{{ $shift->employee->user->role ?? '' }}" readonly>
-        </div>
-        <div id="caregroup-div" style="display: {{ $shift->employee->user->role == 'Caregiver' ? 'block' : 'none' }};">
-            <label for="caregroup">Caregiver Group</label>
-            <select name="caregroup" id="caregroup">
-                <!-- <option value="" disabled>Select a Group</option> -->
-                <option value="">Select a Group</option>
-                <option value="Group A" {{ $shift->caregroup == 'Group A' ? 'selected' : '' }}>Group A</option>
-                <option value="Group B" {{ $shift->caregroup == 'Group B' ? 'selected' : '' }}>Group B</option>
-                <option value="Group C" {{ $shift->caregroup == 'Group C' ? 'selected' : '' }}>Group C</option>
-                <option value="Group D" {{ $shift->caregroup == 'Group D' ? 'selected' : '' }}>Group D</option>
-            </select>
-        </div>
-        <div>
-            <label for="shift_start">Shift Start</label>
-            <input type="datetime-local" name="shift_start" id="shift_start" value="{{ $shift->shift_start }}" required>
-        </div>
-        <div>
-            <label for="shift_end">Shift End</label>
-            <input type="datetime-local" name="shift_end" id="shift_end" value="{{ $shift->shift_end }}" required>
-        </div>
+        <label for="emp_id">Employee:</label>
+        <select name="emp_id" id="emp_id" required onchange="updateRole()">
+            <option value="">Select Employee</option>
+            @foreach ($employees as $employee)
+                <option value="{{ $employee->emp_id }}" data-role="{{ $employee->user->role }}" {{ $shift->emp_id == $employee->emp_id ? 'selected' : '' }}>
+                    {{ $employee->user->first_name }} {{ $employee->user->last_name }}
+                </option>
+            @endforeach
+        </select>
+        <input type="hidden" id="role" name="role" value="{{ $shift->employee->user->role }}">
         <button type="submit">Update Shift</button>
     </form>
 </div>
@@ -90,9 +75,23 @@
         if (role === 'Caregiver') {
             caregroupDiv.style.display = 'block';
         } else {
-        caregroupDiv.style.display = 'none';
-        caregroupSelect.selectedIndex = 0; // Reset the caregroup dropdown
+            caregroupDiv.style.display = 'none';
         }
     }
+
+    // Initialize the form based on the selected employee
+    document.addEventListener('DOMContentLoaded', function() {
+        updateRole();
+    });
 </script>
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 @endsection

@@ -80,6 +80,9 @@
         Route::put('/shifts/{id}', [ShiftController::class, 'update'])->name('shifts.update');
     });
 
+    Route::get('/roster', [ShiftController::class, 'roster'])->name('roster');
+    
+
     Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
     
 

@@ -13,6 +13,10 @@
                     {{ __('Log Out') }}
                 </x-dropdown-link>
             </form>
+            <form method="GET" action="{{ route('shifts.index') }}"> 
+                @csrf
+                <button type="submit">{{ __('Roster') }}</button>
+            </form>
 
         </div>
     </div>

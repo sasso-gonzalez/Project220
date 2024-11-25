@@ -17,6 +17,10 @@
                 @csrf
                 <button type="submit">{{ __('Home') }}</button>
             </form>
+            <form method="GET" action="{{ route('shifts.index') }}"> 
+                @csrf
+                <button type="submit">{{ __('Roster') }}</button>
+            </form>
 
 
         </div>

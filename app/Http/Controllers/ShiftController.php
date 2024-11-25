@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Shift;
-use App\Models\Employee; //changed from User to employee
+use App\Models\Employee;
 use Illuminate\Http\Request;
-
 
 class ShiftController extends Controller
 {
@@ -15,7 +14,7 @@ class ShiftController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Shift::with('employee.user');
+        $query = Shift::with('employee.user'); // Eager load employee and user
     
         if ($request->has('date')) {
             $date = $request->input('date');
@@ -32,28 +31,96 @@ class ShiftController extends Controller
      */
     public function create()
     {
-        // Fetch all employees and eager load their related user (to get the role and name)
-        $employees = Employee::with('user')->get(); // This will include the user's data (name, role, etc.)
-        
-        return view('shifts.create', compact('employees'));
+        $assignedCaregivers = Shift::where('shift_date', now()->toDateString())
+            ->whereHas('employee.user', function ($query) {
+                $query->where('role', 'Caregiver');
+            })
+            ->pluck('emp_id')
+            ->toArray();
+
+        $assignedCaregroups = Shift::where('shift_date', now()->toDateString())
+            ->pluck('caregroup')
+            ->toArray();
+
+        $employees = Employee::with('user')
+            ->whereNotIn('emp_id', $assignedCaregivers)
+            ->get();
+
+        $allCaregroups = ['A', 'B', 'C', 'D'];
+        $availableCaregroups = array_diff($allCaregroups, $assignedCaregroups);
+
+        return view('shifts.create', compact('employees', 'availableCaregroups'));
     }
 
     /**
      * Store a new shift in the database.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'emp_id' => 'required|exists:employees,emp_id',
-            'shift_start' => 'required|date',
-            'shift_end' => 'required|date|after:shift_start',
-            'caregroup' => 'nullable|string|max:255',
-        ]);
+
+     public function store(Request $request)
+     {
+         $request->validate([
+             'shift_date' => 'required|date',
+             'shift_start' => 'required|date',
+             'shift_end' => 'required|date|after:shift_start',
+             'caregroup' => 'nullable|string',
+             'emp_id' => [
+                 'required',
+                 'exists:employees,emp_id',
+                 function ($attribute, $value, $fail) use ($request) {
+                     $employee = Employee::with('user')->where('emp_id', $value)->first();
+                     if ($employee) {
+                         // Check if the employee is already scheduled for a different care group on the same day
+                         $exists = Shift::where('shift_date', $request->shift_date)
+                             ->where('emp_id', $value)
+                             ->where('caregroup', '<>', $request->caregroup)
+                             ->exists();
+                         if ($exists) {
+                             $fail('This employee is already scheduled for a different care group on this date.');
+                         }
+                     }
+                 },
+             ],
+         ]);
+     
+         Shift::create($request->all());
+     
+         return redirect()->route('shifts.index')->with('success', 'Shift created successfully.');
+     }
+
+
+
+     
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'shift_date' => 'required|date',
+    //         'shift_start' => 'required|date',
+    //         'shift_end' => 'required|date|after:shift_start',
+    //         'caregroup' => 'nullable|string',
+    //         'emp_id' => [
+    //             'required',
+    //             'exists:employees,emp_id',
+    //             function ($attribute, $value, $fail) use ($request) {
+    //                 $employee = Employee::with('user')->where('emp_id', $value)->first();
+    //                 if ($employee && $employee->user->role === 'Caregiver' && $request->caregroup) {
+    //                     $exists = Shift::where('shift_date', $request->shift_date)
+    //                         ->where('caregroup', $request->caregroup)
+    //                         ->whereHas('employee.user', function ($query) {
+    //                             $query->where('role', 'Caregiver');
+    //                         })
+    //                         ->exists();
+    //                     if ($exists) {
+    //                         $fail('Only one Caregiver can work with this patient group on this date.');
+    //                     }
+    //                 }
+    //             },
+    //         ],
+    //     ]);
     
-        Shift::create($request->all());
+    //     Shift::create($request->all());
     
-        return redirect()->route('shifts.index')->with('success', 'Shift created successfully!');
-    }
+    //     return redirect()->route('shifts.index')->with('success', 'Shift created successfully.');
+    // }
 
     /**
      * Show the form for editing an existing shift.
@@ -61,64 +128,104 @@ class ShiftController extends Controller
     public function edit($id)
     {
         $shift = Shift::findOrFail($id);
-        $employees = Employee::all();
-        return view('shifts.edit', compact('shift', 'employees'));
+
+        $assignedCaregivers = Shift::where('shift_date', $shift->shift_date)
+            ->where('id', '<>', $id)
+            ->whereHas('employee.user', function ($query) {
+                $query->where('role', 'Caregiver');
+            })
+            ->pluck('emp_id')
+            ->toArray();
+
+        $assignedCaregroups = Shift::where('shift_date', $shift->shift_date)
+            ->where('id', '<>', $id)
+            ->pluck('caregroup')
+            ->toArray();
+
+        $employees = Employee::with('user')
+            ->whereNotIn('emp_id', $assignedCaregivers)
+            ->get();
+
+        $allCaregroups = ['A', 'B', 'C', 'D'];
+        $availableCaregroups = array_diff($allCaregroups, $assignedCaregroups);
+
+        return view('shifts.edit', compact('shift', 'employees', 'availableCaregroups'));
     }
-    
-    
 
     /**
      * Update an existing shift in the database.
      */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'emp_id' => 'required|exists:employees,emp_id',
-            'shift_start' => 'required|date',
-            'shift_end' => 'required|date|after:shift_start',
-            'caregroup' => 'nullable|string|max:255',
-        ]);
-    
-        $shift = Shift::findOrFail($id);
-        $shift->update($request->all());
-    
-        return redirect()->route('shifts.index')->with('success', 'Shift updated successfully!');
-    }
+
+
+     public function update(Request $request, $id)
+{
+    $request->validate([
+        'shift_date' => 'required|date',
+        'shift_start' => 'required|date',
+        'shift_end' => 'required|date|after:shift_start',
+        'caregroup' => 'nullable|string',
+        'emp_id' => [
+            'required',
+            'exists:employees,emp_id',
+            function ($attribute, $value, $fail) use ($request, $id) {
+                $employee = Employee::with('user')->where('emp_id', $value)->first();
+                if ($employee) {
+                    // Check if the employee is already scheduled for a different care group on the same day
+                    $exists = Shift::where('shift_date', $request->shift_date)
+                        ->where('emp_id', $value)
+                        ->where('caregroup', '<>', $request->caregroup)
+                        ->where('id', '<>', $id) // Exclude the current shift
+                        ->exists();
+                    if ($exists) {
+                        $fail('This employee is already scheduled for a different care group on this date.');
+                    }
+                }
+            },
+        ],
+    ]);
+
+    $shift = Shift::findOrFail($id);
+    $shift->update($request->all());
+
+    return redirect()->route('shifts.index')->with('success', 'Shift updated successfully.');
 }
-
-// namespace App\Http\Controllers;
-
-// use App\Models\Shift;
-// use App\Models\User;
-// use Illuminate\Http\Request;
-
-// class ShiftController extends Controller
-// {
-//     /**
-//      * Display a listing of shifts.
-//      */
-//     public function index(Request $request)
-//     {
-//         $shifts = Shift::all();
-//         return view('shifts.index', compact('shifts'));
-//     }
-
-//     /**
-//      * Store a new shift in the database.
-//      */
-//     public function store(Request $request)
+//     public function update(Request $request, $id)
 //     {
 //         $request->validate([
-//             'role' => 'required|string|unique:shifts',
-//             'user_id' => 'required|exists:users,id',
-//             'name' => 'required|string|max:255',
+//             'shift_date' => 'required|date',
 //             'shift_start' => 'required|date',
 //             'shift_end' => 'required|date|after:shift_start',
-//             'patient_group' => 'nullable|string|max:255',
+//             'caregroup' => 'nullable|string',
+//             'emp_id' => [
+//                 'required',
+//                 'exists:employees,emp_id',
+//                 function ($attribute, $value, $fail) use ($request, $id) {
+//                     $employee = Employee::with('user')->where('emp_id', $value)->first();
+//                     if ($employee && $employee->user->role === 'Caregiver' && $request->caregroup) {
+//                         $exists = Shift::where('shift_date', $request->shift_date)
+//                             ->where('caregroup', $request->caregroup)
+//                             ->whereHas('employee.user', function ($query) {
+//                                 $query->where('role', 'Caregiver');
+//                             })
+//                             ->where('id', '<>', $id) // Exclude the current shift
+//                             ->exists();
+//                         if ($exists) {
+//                             $fail('Only one Caregiver can work with this patient group on this date.');
+//                         }
+//                     }
+//                 },
+//             ],
 //         ]);
-
-//         Shift::create($request->all());
-
-//         return redirect()->back()->with('success', 'Shift created successfully!');
+    
+//         $shift = Shift::findOrFail($id);
+//         $shift->update($request->all());
+    
+//         return redirect()->route('shifts.index')->with('success', 'Shift updated successfully.');
 //     }
-// }
+
+}
+
+
+
+
+

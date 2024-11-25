@@ -36,41 +36,29 @@
 <br><br><br><br>
 <div class="container">
     <h1>Create Shift</h1>
-    <form method="POST" action="{{ route('shifts.store') }}">
+    <form action="{{ route('shifts.store') }}" method="POST">
         @csrf
-        <div>
-            <label for="emp_id">Assign Employee</label>
-            <select name="emp_id" id="emp_id" onchange="updateRole()" required>
-                <option value="" disabled selected>Select an Employee</option>
-                @foreach($employees as $employee)
-                    <option value="{{ $employee->emp_id }}" 
-                        data-role="{{ $employee->user->role ?? '' }}">
-                        {{ $employee->user->first_name ?? 'N/A' }} {{ $employee->user->last_name ?? 'N/A' }}
-                    </option>
+        <input type="date" name="shift_date" required>
+        <input type="datetime-local" name="shift_start" required>
+        <input type="datetime-local" name="shift_end" required>
+        <div id="caregroup-div">
+            <label for="caregroup">Care Group:</label>
+            <select name="caregroup" id="caregroup" required>
+                @foreach ($availableCaregroups as $caregroup)
+                    <option value="{{ $caregroup }}">{{ $caregroup }}</option>
                 @endforeach
             </select>
         </div>
-        <div>
-            <label for="role">Role</label>
-            <input type="text" name="role" id="role" readonly>
-        </div>
-        <div id="caregroup-div" style="display: none;">
-            <label for="caregroup">Caregiver Group</label>
-            <select name="caregroup" id="caregroup">
-                <option value="" disabled selected>Select a Group</option>
-                <option value="Group A">Group A</option>
-                <option value="Group B">Group B</option>
-                <option value="Group C">Group C</option>
-            </select>
-        </div>
-        <div>
-            <label for="shift_start">Shift Start</label>
-            <input type="datetime-local" name="shift_start" id="shift_start" required>
-        </div>
-        <div>
-            <label for="shift_end">Shift End</label>
-            <input type="datetime-local" name="shift_end" id="shift_end" required>
-        </div>
+        <label for="emp_id">Employee:</label>
+        <select name="emp_id" id="emp_id" required onchange="updateRole()">
+            <option value="">Select Employee</option>
+            @foreach ($employees as $employee)
+                <option value="{{ $employee->emp_id }}" data-role="{{ $employee->user->role }}">
+                    {{ $employee->user->first_name }} {{ $employee->user->last_name }}
+                </option>
+            @endforeach
+        </select>
+        <input type="hidden" id="role" name="role">
         <button type="submit">Create Shift</button>
     </form>
 </div>
@@ -89,5 +77,20 @@
             caregroupDiv.style.display = 'none';
         }
     }
+
+    // Initialize the form based on the selected employee
+    document.addEventListener('DOMContentLoaded', function() {
+        updateRole();
+    });
 </script>
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 @endsection

@@ -21,7 +21,8 @@ class Shift extends Model
     // Fillable attributes for mass assignment
     protected $fillable = [
         'emp_id',
-        'caregroup', //added this - serena
+        'caregroup', 
+        'shift_date',
         'shift_start',
         'shift_end',
     ];
