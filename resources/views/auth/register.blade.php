@@ -36,7 +36,7 @@
         <!-- Role -->
         <div class="form-group">
             <label for="role">Role</label>
-            <select name="role" id="role" class="form-control" required>
+            <select name="role" id="role" class="form-control" onchange='patientFields()' required>
                 <option value="" disabled selected>Select a role</option>
                 @foreach($roles as $role)
                     @if ( $role->role !== 'admin') <!-- making sure you can't just register another admin -serena -->

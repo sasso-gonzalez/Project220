@@ -14,10 +14,10 @@ class RoleMiddleware
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  int  $accessLevel
+     * @param  mixed  ...$accessLevels
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next, $accessLevel)
+    public function handle(Request $request, Closure $next, ...$accessLevels)
     {
         if (!auth()->check()) {
             return redirect('/'); // Redirect to login or homepage
@@ -30,14 +30,13 @@ class RoleMiddleware
             abort(403, 'Role not found.'); // Return error if role is not found
         }
 
-        if ($role->access_level != $accessLevel) {
+        if (!in_array($role->access_level, $accessLevels)) {
             abort(403, 'Unauthorized access.'); // Return error if access levels don't match
         }
 
         return $next($request);
     }
 }
-
 
 
 // namespace App\Http\Middleware;
@@ -66,13 +65,20 @@ class RoleMiddleware
 //         $user = auth()->user();
 //         $role = Role::where('role', $user->role)->first(); // Retrieve the Role model based on the role string
 
-//         if (!$role || $role->access_level != $accessLevel) {
+//         if (!$role) {
+//             abort(403, 'Role not found.'); // Return error if role is not found
+//         }
+
+//         if ($role->access_level != $accessLevel) {
 //             abort(403, 'Unauthorized access.'); // Return error if access levels don't match
 //         }
 
 //         return $next($request);
 //     }
 // }
+
+
+
 
 
 

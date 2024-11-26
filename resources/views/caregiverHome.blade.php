@@ -1,29 +1,8 @@
 @extends('layouts.app')
+@include('layouts.navigation')
+<br><br><br><br>
 
 @section('content')
-    <div class="navbar">
-        <div class="navbar_items">
-
-            <!-- <div>{{ Auth::user()->name }}</div> -->
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <x-dropdown-link :href="route('logout')"
-                    onclick="event.preventDefault();
-                    this.closest('form').submit();">
-                    {{ __('Log Out') }}
-                </x-dropdown-link>
-            </form>
-            <form method="GET" action="{{ route('caregiverHome') }}"> 
-                @csrf
-                <button type="submit">{{ __('Home') }}</button>
-            </form>
-            <form method="GET" action="{{ route('shifts.index') }}"> 
-                @csrf
-                <button type="submit">{{ __('Roster') }}</button>
-            </form>
-
-        </div>
-    </div>
     <div class="container">
     <h1>Caregiver's Home</h1>
     <p>This page is accessed by the caregiver who logged in.</p>

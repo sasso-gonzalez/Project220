@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id('patient_id');
             $table->unsignedBigInteger('user_id');
             $table->integer('family_code')->unique();
-            $table->string('caregroup')->nullable;
+            $table->string('caregroup')->nullable();
             $table->decimal('amount_due', 11, 2);
-            $table->date('payment_date')->nullable;
+            $table->date('admission_date')->nullable();
+            $table->date('payment_date')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

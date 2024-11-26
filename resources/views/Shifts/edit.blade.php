@@ -1,39 +1,8 @@
 @extends('layouts.app')
+@include('layouts.navigation')
+<br><br><br><br><b><br><br><br><br>
 
 @section('content')
-<div class="navbar">
-    <div class="navbar_items">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <x-dropdown-link :href="route('logout')"
-                onclick="event.preventDefault();
-                this.closest('form').submit();">
-                {{ __('Log Out') }}
-            </x-dropdown-link>
-        </form>
-        <form method="GET" action="{{ route('admin.pending') }}">
-            @csrf
-            <button type="submit">{{ __('Account Status') }}</button>
-        </form>
-        <form method="GET" action="{{ route('adminHome') }}">
-            @csrf
-            <button type="submit">{{ __('Home') }}</button>
-        </form>
-        <form method="GET" action="{{ route('adminRoles') }}">
-            @csrf
-            <button type="submit">{{ __('Roles') }}</button>
-        </form>
-        <form method="GET" action="{{ route('shifts.index') }}">
-            @csrf
-            <button type="submit">{{ __('Work Shifts') }}</button>
-        </form>
-        <form method="GET" action="{{ route('adminList') }}">
-            @csrf
-            <button type="submit">{{ __('Patients/Employee List') }}</button>
-        </form>
-    </div>
-</div>
-<br><br><br><br>
 <div class="container">
     <h1>Edit Shift</h1>
     <form action="{{ route('shifts.update', $shift->id) }}" method="POST">
@@ -65,24 +34,29 @@
 </div>
 
 <script>
-    function updateRole() {
-        const selectedOption = document.querySelector('#emp_id option:checked');
-        const role = selectedOption.getAttribute('data-role');
-        document.getElementById('role').value = role;
+function updateRole() {
+    const selectedOption = document.querySelector('#emp_id option:checked');
+    const role = selectedOption.getAttribute('data-role');
+    document.getElementById('role').value = role;
 
-        // Show or hide caregiver group dropdown based on role
-        const caregroupDiv = document.getElementById('caregroup-div');
-        if (role === 'Caregiver') {
-            caregroupDiv.style.display = 'block';
-        } else {
-            caregroupDiv.style.display = 'none';
-        }
+    // Show or hide caregiver group dropdown based on role
+    const caregroupDiv = document.getElementById('caregroup-div');
+    const caregroupInput = document.getElementById('caregroup'); // Assuming this is the input for the caregiver group
+
+    if (role === 'Caregiver') {
+        caregroupDiv.style.display = 'block';
+        caregroupInput.required = true; // Make caregroup input required for caregivers
+    } else {
+        caregroupDiv.style.display = 'none';
+        caregroupInput.value = ''; // Clear the caregiver group value
+        caregroupInput.required = false; // Remove required attribute for non-caregivers
     }
+}
 
-    // Initialize the form based on the selected employee
-    document.addEventListener('DOMContentLoaded', function() {
-        updateRole();
-    });
+// Initialize the form based on the selected employee
+document.addEventListener('DOMContentLoaded', function() {
+    updateRole();
+});
 </script>
 
 @if ($errors->any())

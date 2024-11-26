@@ -8,6 +8,7 @@ use App\Models\User;
 
 class Patient extends Model
 {
+    protected $primaryKey = 'patient_id';
     use HasFactory;
     protected $fillable = [
         'patient_id',
@@ -15,13 +16,9 @@ class Patient extends Model
         'family_code',
         'caregroup',
         'amount_due',
-        'payment_date'
+        'admission_date',
+        'payment_date',
     ];
-
-
-
-
-
 
 
 // Relationship with User model

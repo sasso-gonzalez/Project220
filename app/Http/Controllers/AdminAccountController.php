@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Employee;//was missing this :| -serena
 use App\Models\Patient;//was missing this :| -serena
-use Illuminate\Http\Request;
 use App\Models\Role;
+use Illuminate\Http\Request;
+
 
 
 class AdminAccountController extends Controller
@@ -14,6 +15,8 @@ class AdminAccountController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('role:1,2')->only(['index', 'approve', 'deny', 'adminList']);
+        $this->middleware('role:1')->only(['submitSalary']);
     }
     /**
      * Display a list of pending accounts.
@@ -50,7 +53,7 @@ class AdminAccountController extends Controller
                 ]);
             }
         }
-        else if ($role->access_level === 5) { // Use $role->access_level instead of $user->access_level
+        else if ($role->access_level == 5) { // Use $role->access_level instead of $user->access_level
             $existingPatient = Patient::where('user_id', $user->id)->first(); 
             if (!$existingPatient) {
                 Patient::create([
@@ -58,7 +61,8 @@ class AdminAccountController extends Controller
                     'family_code' => $user->family_code,
                     'caregroup' => null,
                     'amount_due'=> 0,
-                    'payment_date' => now(),
+                    'payment_date' => null,
+                    'admission_date' => null,
                 ]);
             }
         }
@@ -100,123 +104,39 @@ class AdminAccountController extends Controller
                                 ->get();
 
         $adminEmployeeList = User::whereHas('employee')->with('employee')->get();
+        $patientDetails = Patient::all();
         
     
         return view('adminList', [
             'adminPatientList' => $adminPatientList,
-            'adminEmployeeList' => $adminEmployeeList
+            'adminEmployeeList' => $adminEmployeeList,
+            'patientDetails' => $patientDetails,
         ]);
     }
-    public function submitSalary(Request $request, $id) //Working on this -serena
+    
+    public function submitSalary(Request $request, $id)
     {
-        // Validate the input
+        $employee = Employee::findOrFail($id);
+        $authUser = auth()->user();
+        $role = Role::where('role', $authUser->role)->first(); //added this lol -serena  
+        
+        if ($role->access_level !== 1) {
+            return redirect()->route('adminlist')->withErrors(['error' => 'Supervisors cannot edit the salary.']);
+        }
+    
         $request->validate([
             'salary' => 'required|numeric|min:0',
         ]);
     
-        // Finds the employee and updates their salary
-        $employee = Employee::findOrFail($id);
         $employee->salary = $request->input('salary');
         $employee->save();
     
         return redirect()->back()->with('success', 'Salary submitted successfully!');
     }
-    
-    
+
+
 }
 
 
 
 
-// public function approve($id) //just in case i mess something up -serena
-// {
-//     $user = User::findOrFail($id);
-
-//     $role = Role::where('role', $user->access_level)->first();
-
-//     if (!$role) {
-//         return redirect()->back()->withErrors(['error' => 'Role not found for this user.']);
-//     }
-
-//     $user->status = 'approved';
-//     $user->save();
-
-//     if ($user->access_level <= 4) {
-//         // Push data to the employees table
-//         Employee::create([
-//             'user_id' => $user->id,
-//             'salary' => $this->calculateSalary($role->access_level), // Dynamically set a salary
-//         ]);
-//     }
-
-    
-
-//     return redirect()->back()->with('success', 'User approved successfully.');
-// }
-
-
-// private function calculateSalary($accessLevel)
-// {
-//     $salaries = [
-//         1 => 150000,  // Salary for access level 1
-//         2 => 100000,  // Salary for access level 2
-//         3 => 75000,  // Salary for access level 3
-//         4 => 50000,  // Salary for access level 4
-//     ];
-
-//     return $salaries[$accessLevel] ?? 0; // Default salary if level is missing
-// }
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-
-// public function approve($id)
-// {
-//     $user = User::findOrFail($id);
-//     $role = Role::where('role', $user->access_level)->first();
-
-//     if (!$role) {
-//         return redirect()->back()->withErrors(['error' => 'Role not found for this user.']);
-//     }
-
-//     $user->status = 'approved';
-//     $user->save();
-
-//     if ($user->access_level <= 4) {
-//         $existingEmployee = Employee::where('user_id', $user->id)->first();
-//         if (!$existingEmployee) {
-//             Employee::create([
-//                 'user_id' => $user->id,
-//                 'salary' => $this->calculateSalary($role->access_level),
-//             ]);
-//         }
-//     }
-
-//     return redirect()->back()->with('success', 'User approved successfully.');
-// }
-
-
-// private function calculateSalary($accessLevel)
-// {
-//     $salaries = [
-//         1 => 150000,  // Salary for access level 1
-//         2 => 100000,  // Salary for access level 2
-//         3 => 75000,  // Salary for access level 3
-//         4 => 50000,  // Salary for access level 4
-//     ];
-
-//     return $salaries[$accessLevel] ?? 0; // Default salary if level is missing
-// }
-// /**
-//  * Deny a user account.
-//  */
-// public function deny($id)
-// {
-//     $user = User::findOrFail($id);
-//     $user->status = 'denied';
-//     $user->save();
-
-//     return redirect()->back()->with('success', 'User denied successfully.');
-// }
