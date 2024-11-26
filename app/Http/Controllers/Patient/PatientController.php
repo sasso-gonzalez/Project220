@@ -7,6 +7,7 @@ use App\Models\User; // Ensure you import the User model
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 
 class PatientController extends Controller
@@ -16,10 +17,9 @@ class PatientController extends Controller
         $this->middleware('auth');
     }
 
-    public function index($id)
+    public function index(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        return view('patientHome', compact('user'));
+        //
     }
     
     //admin/supervisor can edit/add additional details for each patient (only once per patient) -serena/isaiah 
@@ -29,31 +29,40 @@ class PatientController extends Controller
         return view('additionalInfo', compact('patient'));
     }
 
-public function updatingDetails(Request $request, $id)
-{
-    // validating the incoming request data
-    $request->validate([
-        'patient_id' => 'required|exists:patients,patient_id',
-        'caregroup' => 'required|string',
-        'admission_date' => 'required|date',
-    ]);
+    public function updatingDetails(Request $request, $id)
+    {
+        // validating the incoming request data
+        $request->validate([
+            'patient_id' => 'required|exists:patients,patient_id',
+            'caregroup' => 'required|string',
+            'admission_date' => 'required|date',
+        ]);
 
-    // retrieving the patient record using patient_id
-    $patient = Patient::where('patient_id', $id)->first();
+        // retrieving the patient record using patient_id
+        $patient = Patient::where('patient_id', $id)->first();
 
-    // check if the patient record exists
-    if (!$patient) {
-        return redirect()->back()->withErrors(['error' => 'Patient not found.']);
+        // check if the patient record exists
+        if (!$patient) {
+            return redirect()->back()->withErrors(['error' => 'Patient not found.']);
+        }
+
+        $patient->caregroup = $request->caregroup;
+        $patient->admission_date = $request->admission_date;
+        $patient->save();
+
+        return redirect()->route('adminList')->with('success', 'Patient details updated successfully.');
     }
-
-    $patient->caregroup = $request->caregroup;
-    $patient->admission_date = $request->admission_date;
-    $patient->save();
-
-    return redirect()->route('adminList')->with('success', 'Patient details updated successfully.');
+    public function patientHome()
+    {
+        $user = Auth::user();
+        $patient = Patient::where('user_id', $user->id)->first();
+        return view('patientHome', ['user' => $user, 'patient' => $patient]);
+    }
+    
+    // public function patientHome($id){
+    //     $user = User::findorFail($id); 
+    //     return view('patientHome', compact('user'));
+    // }
+    
+    
 }
-
-
-}
-
-?>

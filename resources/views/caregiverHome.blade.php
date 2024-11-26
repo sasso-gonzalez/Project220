@@ -1,60 +1,19 @@
 @extends('layouts.app')
 @include('layouts.navigation')
-<br><br><br><br>
+<br><br><br><br><b><br><br><br><br>
 
 @section('content')
     <div class="container">
-    <h1>Caregiver's Home</h1>
-    <p>This page is accessed by the caregiver who logged in.</p>
-
-    <!-- List of Patients Duty Button -->
-    <!-- <a href=" route('patients.duty') " class="btn btn-primary mb-3">List of Patients duty today</a> -->
-
-    <!-- Table of Medications and Meals -->
-    <table class="table table-bordered">
-        <thead class="bg-light">
-            <tr>
-                <th>Name</th>
-                <th>Morning Medicine</th>
-                <th>Afternoon Medicine</th>
-                <th>Night Medicine</th>
-                <th>Breakfast</th>
-                <th>Lunch</th>
-                <th>Dinner</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Loop through patients -->
-            <!-- foreach ($patients as $patient) -->
-            <tr>
-                <!-- <td> $patient->name </td> -->
-                <td>
-                    <!-- <input type="checkbox" name="morning_medicine[ $patient->id }}]" value="1" /> -->
-                </td>
-                <td>
-                    <!-- <input type="checkbox" name="afternoon_medicine[ $patient->id }}]" value="1" /> -->
-                </td>
-                <td>
-                    <!-- <input type="checkbox" name="night_medicine[ $patient->id }}]" value="1" /> -->
-                </td>
-                <td>
-                    <!-- <input type="checkbox" name="breakfast[ $patient->id }}]" value="1" /> -->
-                </td>
-                <td>
-                    <!-- <input type="checkbox" name="lunch[ $patient->id }}]" value="1" /> -->
-                </td>
-                <td>
-                    <!-- <input type="checkbox" name="dinner[ $patient->id }}]" value="1" /> -->
-                </td>
-            </tr>
-            <!-- endforeach -->
-        </tbody>
-    </table>
-
-    <!-- Submit and Cancel Buttons -->
-    <div class="d-flex justify-content-end mt-3">
-        <button class="btn btn-success me-2" type="submit">Ok</button>
-        <button class="btn btn-secondary" type="button" onclick="window.location.href='{{ url()->previous() }}'">Cancel</button>
+        <h1>Caregiver Home</h1>
+        <form action="{{ route('caregiver.saveSchedule') }}" method="POST">
+            @csrf
+            @foreach($patients as $patient)
+                {{ $patient->patient_id }}
+            @endforeach
+            @foreach($patientSchedules as $schedule)
+                {{ $schedule->schedule_id }}
+            @endforeach
+            <button type="submit" class="btn btn-primary">Save Schedule</button>
+        </form>
     </div>
-</div>
 @endsection

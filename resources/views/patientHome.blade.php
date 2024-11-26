@@ -1,13 +1,19 @@
 @extends('layouts.app')
 @include('layouts.navigation')
+<br><br><br><br><b><br><br><br><br>
 
+@php
+    $firstName = $user->first_name;
+    $lastName = $user->last_name;
+@endphp
+<br><br><br><br><br>
 @section('content')
 <div class="container">
-    <h1>Welcome, {{ $user->first_name }}</h1>
-    <p>This is the Patient Dashboard.</p>
+    <h1>Welcome, {{ $firstName }} {{ $lastName }}!</h1>
+    <h2>Patient ID: {{$patient->patient_id}}</h2>
     <table>
         <tr>
-            <td>{{ $user->first_name }} {{ $user->last_name }}</td>
+            
         </tr>
     </table>
 </div>

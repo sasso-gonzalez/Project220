@@ -16,8 +16,17 @@ class PatientSchedule extends Model
         'm_med',
         'a_med',
         'n_med',
-        'breakfeast',
+        'breakfast',
         'lunch',
         'dinner',
     ];
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id', 'patient_id');
+    }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'caregiver_id', 'emp_id');
+    }
 }

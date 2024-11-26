@@ -32,55 +32,48 @@ class AuthenticatedSessionController extends Controller
 
         $user = auth()->user();
         if ($user->status === 'N/A') {
-            // should continue on past the else if, if true...
+            // should continue on past the else if, if true...-serena
         }
         else if ($user->status !== "approved") {
-            // Log out the user immediately
             auth()->logout();
-    
-            // Redirect back with an error message
             return back()->withErrors([
                 'email' => __('Your account is not yet approved. Please contact support.'),
             ]);
         }
 
-        // Regenerate the session to prevent session fixation
+        // prevents session fixation
         $request->session()->regenerate();
 
-        // After successful authentication, check the user's role and redirect
+        // after authentication... will check the user's role and redirect acording to access level -serena
         $user = auth()->user();
         $role = Role::findOrFail($user->role);
         $level = $role->access_level;
-        switch ($level) {
-            case 1:
-                return redirect()->route('adminHome');
-            case 2:
-                return redirect()->route('supervisorHome');
-            case 3:
-                return redirect()->route('doctorHome');
-            case 4:
-                return redirect()->route('caregiverHome');
-            case 5:
-                return redirect()->route('patientHome');
-            case 6:
-                return redirect()->route('familyHome');
+
+        try {
+            switch ($level) {
+                case 1:
+                    return redirect()->route('adminHome');
+                case 2:
+                    return redirect()->route('supervisorHome');
+                case 3:
+                    return redirect()->route('doctorHome');
+                case 4:
+                    return redirect()->route('caregiver.home', ['id' => $user->id]);
+                case 5:
+                    return redirect()->route('patientHome', ['id' => $user->id]);
+                case 6:
+                    return redirect()->route('familyHome');
+                default:
+                    throw new \Exception('Invalid role level');
+            }
+        } catch (\Exception $e) {
+            // will log out the user if redirection fails -serena
+            auth()->logout();
+            return back()->withErrors([
+                'email' => __('An error occurred during redirection. Please try again.'),
+            ]);
         }
     }
-    //     $user = auth()->user();
-    //     switch ($user->role) 
-    //     {
-    //         case 'admin':
-    //             return redirect()->route('adminHome');
-    //         case 'Doctor':
-    //             return redirect()->route('doctorHome');
-    //         case 'Patient':
-    //             return redirect()->route('patientHome');
-    //         case 'Caregiver':
-    //             return redirect()->route('caregiverHome');
-    //         case 'Supervisor':
-    //             return redirect()->route('supervisorHome');
-    //     }
-    // }
 
     /**
      * Destroy an authenticated session.

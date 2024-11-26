@@ -23,4 +23,6 @@ class DoctorHomeController extends Controller
     {
         return view('doctorHome'); // A Blade view for Doctor Home
     } 
+
+    
 }

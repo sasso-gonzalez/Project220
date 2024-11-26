@@ -18,7 +18,8 @@ class Employee extends Model
     ];
 
     protected $primaryKey = 'emp_id';
-    public $incrementing = false; //what's this for??? -serena
+
+    // public $incrementing = false; //for something like roles where it tries to increment strings/letters -serena
 
     /**
      * Relationship with User model
@@ -45,5 +46,16 @@ class Employee extends Model
             $q->where('role', $role);
         });
     }
+    
+    public function patientSchedules()
+    {
+        return $this->hasMany(PatientSchedule::class, 'caregiver_id', 'emp_id');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'emp_id', 'emp_id');
+    }
+
 }
 

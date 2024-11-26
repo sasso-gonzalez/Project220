@@ -9,6 +9,7 @@ use App\Models\User;
 class Patient extends Model
 {
     protected $primaryKey = 'patient_id';
+
     use HasFactory;
     protected $fillable = [
         'patient_id',
@@ -26,4 +27,15 @@ class Patient extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function patientSchedules()
+    {
+        return $this->hasMany(PatientSchedule::class, 'patient_id', 'patient_id');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id', 'patient_id');
+    }
+    
 }

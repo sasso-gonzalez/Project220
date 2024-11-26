@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('m_med')->default(false);
             $table->boolean('a_med')->default(false);
             $table->boolean('n_med')->default(false);
-            $table->boolean('breakfeast')->default(false);
+            $table->boolean('breakfast')->default(false);
             $table->boolean('lunch')->default(false);
             $table->boolean('dinner')->default(false);
             $table->timestamps();

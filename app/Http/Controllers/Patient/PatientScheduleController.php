@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PatientSchedule;
+use App\Models\Patient\PatientSchedule;
 use Illuminate\Http\Request;
 
 class PatientScheduleController extends Controller

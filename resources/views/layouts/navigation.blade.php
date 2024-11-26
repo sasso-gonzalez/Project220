@@ -15,43 +15,44 @@
                 $access = $role->access_level;
             @endphp
 
-            <!-- Admin Links (Access Level 1) -->
+            <!-- admin Links (access_level 1) -->
             @if($access === 1)
                 <li><a href="{{ route('adminHome') }}">Admin Home</a></li>
                 <li><a href="{{ route('adminRoles') }}">Manage Roles</a></li>
             @endif
 
-            <!-- Supervisor Links (Access Level 2) -->
+            <!-- Supervisor Links (access_level 2) -->
             @if($access == 2)
                 <li><a href="{{ route('supervisorHome') }}">Supervisor Home</a></li>
             @endif
 
-            <!-- Doctor Links (Access Level 3) -->
+            <!-- Doctor Links (access_level 3) -->
             @if($access == 3)
                 <li><a href="{{ route('doctorHome') }}">Doctor Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
 
             @endif
 
-            <!-- Caregiver Links (Access Level 4) -->
+            <!-- Caregiver Links (access_level 4) -->
             @if($access == 4)
-                <li><a href="{{ route('caregiverHome') }}">Caregiver Home</a></li>
+                <li><a href="{{ route('caregiverHome', ['id' => $user->id]) }}">Caregiver Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
 
             @endif
 
-            <!-- Patient Links (Access Level 5) -->
+            <!-- Patient Links (access_level 5) -->
             @if($access == 5)
-                <li><a href="{{ route('patientHome') }}">Patient Home</a></li>
+                <li><a href="{{ route('patientHome', ['id' => $user->id]) }}">Patient Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
 
             @endif
 
-            <!-- Common Links for Admins and Supervisors -->
+            <!-- access for admins and Supervisors -->
             @if(in_array($access, [1, 2]))
                 <li><a href="{{ route('admin.pending') }}">Accounts Status</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
                 <li><a href="{{ route('adminList') }}">Employee & Patient List</a></li>
+                <li><a href="{{ route('appointment.create') }}">Schedule Doctor's Appointment</a></li>
             @endif
         @endif
     </ul>
