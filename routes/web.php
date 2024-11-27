@@ -11,6 +11,8 @@
     use App\Http\Controllers\AdminRolesController;
     use App\Http\Controllers\ShiftController;
     use App\Http\Controllers\AppointmentController;
+    use App\Http\Controllers\AdminPaymentController;
+    use App\Http\Controllers\AdminReportController;
 
     Route::get('/', function () {
         return view('welcome');
@@ -35,7 +37,11 @@
         Route::get('/admin/home', [AdminAccountController::class, 'adminHome'])->name('adminHome');
         Route::get('/admin/roles', [AdminRolesController::class, 'index'])->name('adminRoles');
         Route::post('/admin/store', [AdminRolesController::class, 'store'])->name('admin.store');
-        Route::post('/admin/submitSalary/{id}', [AdminAccountController::class, 'submitSalary'])->name('admin.submitSalary');    
+        Route::post('/admin/submitSalary/{id}', [AdminAccountController::class, 'submitSalary'])->name('admin.submitSalary');
+        //Admin Payment Page Routes
+        Route::get('/admin/payment', [AdminPaymentController::class, 'show'])->name('admin.payment.show');
+        Route::post('/admin/payment/submit', [AdminPaymentController::class, 'submit'])->name('admin.payment.submit');
+        Route::get('/admin/payment/cancel', [AdminPaymentController::class, 'cancel'])->name('admin.payment.cancel');
     });
 
     // Supervisor Routes
@@ -51,6 +57,7 @@
     // Caregiver Routes
     Route::middleware(['auth', 'role:4'])->group(function () {
         Route::get('/caregiver/home/{id}', [CaregiverHomeController::class, 'showCaregiverHome'])->name('caregiverHome');
+        Route::get('/caregiver/schedule/{id}', [CaregiverHomeController::class, 'showSchedule'])->name('caregiver.schedule');
         Route::post('/caregiver/schedule/save', [CaregiverHomeController::class, 'savePatientSchedule'])->name('caregiver.saveSchedule');
     });
 
@@ -99,6 +106,11 @@
         Route::post('/appointment/store', [AppointmentController::class, 'store'])->name('appointment.store');
         Route::get('/patients/{id}', [AppointmentController::class, 'getPatient']);
         Route::get('/doctors/scheduled/{date}', [AppointmentController::class, 'getScheduledDoctors']);
+
+        //adminReport Routes
+        Route::get('/admin-report', [AdminReportController::class, 'index'])->name('admin.report');//supposed to be under supervisor and admin
+
+
 
     });
 

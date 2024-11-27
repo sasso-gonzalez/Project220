@@ -19,6 +19,8 @@
             @if($access === 1)
                 <li><a href="{{ route('adminHome') }}">Admin Home</a></li>
                 <li><a href="{{ route('adminRoles') }}">Manage Roles</a></li>
+                <li><a href="{{ route('admin.payment.show') }}">Patient Payment</a></li>
+
             @endif
 
             <!-- Supervisor Links (access_level 2) -->
@@ -53,6 +55,8 @@
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
                 <li><a href="{{ route('adminList') }}">Employee & Patient List</a></li>
                 <li><a href="{{ route('appointment.create') }}">Schedule Doctor's Appointment</a></li>
+                <li><a href="{{ route('admin.report') }}">Reports</a></li>
+
             @endif
         @endif
     </ul>

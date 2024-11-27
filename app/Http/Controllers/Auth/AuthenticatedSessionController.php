@@ -49,7 +49,7 @@ class AuthenticatedSessionController extends Controller
         $role = Role::findOrFail($user->role);
         $level = $role->access_level;
 
-        try {
+        // try {
             switch ($level) {
                 case 1:
                     return redirect()->route('adminHome');
@@ -58,7 +58,7 @@ class AuthenticatedSessionController extends Controller
                 case 3:
                     return redirect()->route('doctorHome');
                 case 4:
-                    return redirect()->route('caregiver.home', ['id' => $user->id]);
+                    return redirect()->route('caregiverHome', ['id' => $user->id]);
                 case 5:
                     return redirect()->route('patientHome', ['id' => $user->id]);
                 case 6:
@@ -66,13 +66,13 @@ class AuthenticatedSessionController extends Controller
                 default:
                     throw new \Exception('Invalid role level');
             }
-        } catch (\Exception $e) {
-            // will log out the user if redirection fails -serena
-            auth()->logout();
-            return back()->withErrors([
-                'email' => __('An error occurred during redirection. Please try again.'),
-            ]);
-        }
+        // } catch (\Exception $e) {
+        //     // will log out the user if redirection fails -serena
+        //     auth()->logout();
+        //     return back()->withErrors([
+        //         'email' => __('An error occurred during redirection. Please try again.'),
+        //     ]);
+        // }
     }
 
     /**
