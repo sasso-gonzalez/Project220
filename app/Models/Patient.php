@@ -8,11 +8,11 @@ use App\Models\User;
 
 class Patient extends Model
 {
-    protected $primaryKey = 'patient_id';
-
     use HasFactory;
+
+    protected $primaryKey = 'patient_id';
     protected $fillable = [
-        'patient_id',
+        // 'patient_id',
         'user_id',
         'family_code',
         'caregroup',

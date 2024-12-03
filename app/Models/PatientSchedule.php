@@ -15,16 +15,9 @@ class PatientSchedule extends Model
 {
     use HasFactory;
 
-    // Define the custom primary key
     protected $primaryKey = 'schedule_id';
+    protected $table = 'patient_schedules';
 
-    // Set to false if your primary key is not auto-incrementing
-    public $incrementing = true;
-
-    // Specify the primary key type
-    protected $keyType = 'int';
-
-    // Allow mass assignment for the required columns
     protected $fillable = [
         'caregiver_id', 
         'patient_id', 

@@ -11,13 +11,12 @@ class Employee extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'emp_id';
     protected $fillable = [
-        'emp_id',
+        // 'emp_id',
         'user_id',
         'salary',
     ];
-
-    protected $primaryKey = 'emp_id';
 
     // public $incrementing = false; //for something like roles where it tries to increment strings/letters -serena
 
@@ -54,7 +53,11 @@ class Employee extends Model
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class, 'emp_id', 'emp_id');
+        return $this->hasMany(Appointment::class, 'doctor_id', 'emp_id');//changed to doctor_id
+    }
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'doctor_id', 'emp_id');
     }
 
 }

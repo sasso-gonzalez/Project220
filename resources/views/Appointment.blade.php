@@ -101,6 +101,7 @@
                     var doctorSelect = document.getElementById('doctor_id');
                     var submitButton = document.getElementById('submit_button');
                     doctorSelect.innerHTML = '';
+                    var doctors = data.filter(employee => employee.role === 'doctor');
                     if (data.length > 0) {
                         data.forEach(function(doctor) {
                             var option = document.createElement('option');

@@ -32,21 +32,23 @@
             @if($access == 3)
                 <li><a href="{{ route('doctorHome') }}">Doctor Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
-
             @endif
 
             <!-- Caregiver Links (access_level 4) -->
             @if($access == 4)
                 <li><a href="{{ route('caregiverHome', ['id' => $user->id]) }}">Caregiver Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
-
             @endif
 
             <!-- Patient Links (access_level 5) -->
             @if($access == 5)
                 <li><a href="{{ route('patientHome', ['id' => $user->id]) }}">Patient Home</a></li>
                 <li><a href="{{ route('shifts.index') }}">Roster</a></li>
+            @endif
 
+            <!-- family Member Links (access_level 6) -->
+            @if($access == 6)
+                <li><a href="{{ route('familyHome', ['id' => $user->id]) }}">Home</a></li>
             @endif
 
             <!-- access for admins and Supervisors -->

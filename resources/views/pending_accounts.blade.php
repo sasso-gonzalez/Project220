@@ -1,6 +1,6 @@
 @extends('layouts.app')
-
 @include('layouts.navigation')
+<br><br><br><br><br><br><br><br><br><br><br><br>
 
 @section('content')
     <br><br><br><br>

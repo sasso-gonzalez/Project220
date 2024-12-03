@@ -5,7 +5,7 @@
     use App\Http\Controllers\ProfileController;
     use App\Http\Controllers\AdminAccountController;
     use App\Http\Controllers\Supervisor\SupervisorHomeController;
-    use App\Http\Controllers\Doctor\DoctorHomeController;
+    use App\Http\Controllers\Doctor\DoctorController;
     use App\Http\Controllers\Caregiver\CaregiverHomeController;
     use App\Http\Controllers\Patient\PatientController;
     use App\Http\Controllers\AdminRolesController;
@@ -13,6 +13,8 @@
     use App\Http\Controllers\AppointmentController;
     use App\Http\Controllers\AdminPaymentController;
     use App\Http\Controllers\AdminReportController;
+    use App\Http\Controllers\FamilyMemberController;
+
 
     Route::get('/', function () {
         return view('welcome');
@@ -26,18 +28,14 @@
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
-    // Route::middleware('auth')->group(function () {
-    //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    // });
-
-    // Admin Account Routes
+    // admin Account Routes
     Route::middleware(['auth', 'role:1'])->group(function () {
         Route::get('/admin/home', [AdminAccountController::class, 'adminHome'])->name('adminHome');
         Route::get('/admin/roles', [AdminRolesController::class, 'index'])->name('adminRoles');
         Route::post('/admin/store', [AdminRolesController::class, 'store'])->name('admin.store');
+
         Route::post('/admin/submitSalary/{id}', [AdminAccountController::class, 'submitSalary'])->name('admin.submitSalary');
+
         //Admin Payment Page Routes
         Route::get('/admin/payment', [AdminPaymentController::class, 'show'])->name('admin.payment.show');
         Route::post('/admin/payment/submit', [AdminPaymentController::class, 'submit'])->name('admin.payment.submit');
@@ -51,7 +49,11 @@
 
     // Doctor Routes
     Route::middleware(['auth', 'role:3'])->group(function () {
-        Route::get('/doctor/home', [DoctorHomeController::class, 'doctorHome'])->name('doctorHome');
+        Route::get('/doctor/home', [DoctorController::class, 'index'])->name('doctorHome');
+        Route::get('/doctor/appointments', [DoctorController::class, 'index'])->name('doctorAppointments');
+        Route::post('/doctor/{appointmentId}/prescriptions', [DoctorController::class, 'savePrescription'])->name('prescriptions.save');
+        //patientOfDoctor page
+        Route::get('/patientOfDoctor/{appointment}', [DoctorController::class, 'showPatientDetails'])->name('patientOfDoctor');
     });
 
     // Caregiver Routes
@@ -67,7 +69,13 @@
         Route::get('/patient/home/{id}', [PatientController::class, 'patientHome'])->name('patientHome');
     });
 
-    // Roster related routes
+    // familyMember Routes
+    Route::middleware(['auth', 'role:6'])->group(function () {
+        Route::get('/family/home/{id}', [FamilyMemberController::class, 'index'])->name('familyHome');
+        Route::post('/family-details', [FamilyMemberController::class, 'show'])->name('family.details');
+    });
+
+    // roster related routes
     Route::middleware(['auth'])->group(function () {
         Route::get('/shifts/index', [ShiftController::class, 'index'])->name('shifts.index');
         Route::post('/shifts/store', [ShiftController::class, 'store'])->name('shifts.store');
@@ -82,7 +90,7 @@
 
 
 
-    // Roster creation and management routes for specific roles
+    // Roster creation and management routes for admin/supervisor
     Route::middleware(['auth', 'role:1, 2'])->group(function () {
         //account approval
         Route::get('/admin/pending_accounts', [AdminAccountController::class, 'index'])->name('admin.pending');
@@ -96,7 +104,7 @@
         Route::get('/shifts/{id}/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
         Route::put('/shifts/{id}', [ShiftController::class, 'update'])->name('shifts.update');
         
-        //List of Patient/addditionalifo and employees/salary. Accessable to both admin/supervisor (supervisor cant change salary however) -serena
+        //List of Patient/addditionalifo and employees/salary. Accessible to both admin/supervisor (supervisor cant change salary however) -serena
         Route::get('/additionalInfo/{id}', [PatientController::class, 'patientDetails'])->name('additionalInfo');
         Route::post('/additionalInfo/{id}', [PatientController::class, 'updatingDetails'])->name('updatingDetails');
         Route::get('/list', [AdminAccountController::class, 'adminList'])->name('adminList');
@@ -110,14 +118,10 @@
         //adminReport Routes
         Route::get('/admin-report', [AdminReportController::class, 'index'])->name('admin.report');//supposed to be under supervisor and admin
 
-
-
     });
 
     Route::get('/roster', [ShiftController::class, 'roster'])->name('roster');
-    
 
     Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
-
 
     require __DIR__.'/auth.php';

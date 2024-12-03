@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Prescription extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'meds_id';
+
     protected $fillable = [
-        'meds_id',
+        // 'meds_id',
         'appointment_id',
         'doctor_id',
         'doc_notes',
@@ -17,4 +20,14 @@ class Prescription extends Model
         'a_med',
         'n_med',
     ];
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class,'appointment_id', 'appointment_id');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Employee::class, 'doctor_id', 'emp_id');
+    }
 }

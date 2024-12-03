@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @include('layouts.navigation')
-<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 @section('content')
     <div class="container">
@@ -45,24 +45,21 @@
                         <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                         <td>{{ $user->role }}</td>
                         <td>
+                        <form action="{{ route('admin.submitSalary', ['id' => $user->employee->emp_id]) }}" method="POST">
+                            @csrf
+                            @if ($user->role === 'admin')
                             <div>
-                            <form action="{{ route('admin.submitSalary', ['id' => $user->employee->emp_id]) }}" method="POST">
-                        @csrf
-                        @if ($user->role === 'admin')
-                        <div>
-                            <input type="number" id="salary-{{ $user->employee->emp_id }}" 
-                                   value="{{ $user->employee->salary ?? '' }}" 
-                                   name="salary" 
-                                   required 
-                                   min="0">
-                            <button type="submit">Submit</button>
-                        </div>
-                        @else
-                            <td>{{ $user->employee->salary ?? '' }}</td>
-                        @endif
-
-                    </form>
+                                <input type="number" id="salary-{{ $user->employee->emp_id }}" 
+                                    value="{{ $user->employee->salary ?? '' }}" 
+                                    name="salary" 
+                                    required 
+                                    min="0">
+                                <button type="submit">Submit</button>
                             </div>
+                            @else
+                                <td>{{ $user->employee->salary ?? '' }}</td>
+                            @endif
+                        </form>
                         </td> 
                     </tr>
                 @endforeach
